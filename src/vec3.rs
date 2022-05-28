@@ -3,13 +3,12 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
 };
 
+use crate::point3::Point3;
+
 #[derive(Clone, Copy)]
 pub struct Vec3 {
     e: [f64; 3],
 }
-
-pub type Point3 = Vec3;
-pub type Color = Vec3;
 
 impl Vec3 {
     pub fn new(e0: f64, e1: f64, e2: f64) -> Vec3 {
@@ -47,14 +46,6 @@ impl Vec3 {
 
     pub fn normalized(self) -> Vec3 {
         self / self.length()
-    }
-
-    pub fn format_color(self) -> String {
-        let red = (256 as f64 * self[0]) as u64;
-        let green = (256 as f64 * self[1]) as u64;
-        let blue = (256 as f64 * self[2]) as u64;
-
-        format!("{red} {green} {blue}")
     }
 }
 
@@ -157,5 +148,21 @@ impl DivAssign<f64> for Vec3 {
         *self = Vec3 {
             e: [self[0] / other, self[1] / other, self[2] / other],
         };
+    }
+}
+
+impl Add<Point3> for Vec3 {
+    type Output = Point3;
+
+    fn add(self, other: Point3) -> Point3 {
+        Point3::new(self[0] + other[0], self[1] + other[1], self[2] + other[2])
+    }
+}
+
+impl Sub<Point3> for Vec3 {
+    type Output = Point3;
+
+    fn sub(self, other: Point3) -> Point3 {
+        Point3::new(self[0] - other[0], self[1] - other[1], self[2] - other[2])
     }
 }
