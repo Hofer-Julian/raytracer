@@ -1,7 +1,7 @@
 use crate::point3::Point3;
 use crate::vec3::Vec3;
 
-pub(crate) struct Ray {
+pub struct Ray {
     orig: Point3,
     dir: Vec3,
 }

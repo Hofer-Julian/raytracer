@@ -4,8 +4,10 @@ use std::{
 };
 
 mod color;
+mod hit;
 mod point3;
 mod ray;
+mod sphere;
 mod vec3;
 
 use color::Color;
