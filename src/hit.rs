@@ -35,3 +35,31 @@ impl HitRecord {
 pub trait Hit {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
 }
+
+pub struct World(Vec<Box<dyn Hit>>);
+
+impl World {
+    pub fn new() -> Self {
+        Self(Vec::new())
+    }
+
+    pub fn push(&mut self, element: Box<dyn Hit>) {
+        self.0.push(element);
+    }
+}
+
+impl Hit for World {
+    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+        let mut hit_record = None;
+        let mut t_closest = t_max;
+
+        for object in &self.0 {
+            if let Some(rec) = object.hit(r, t_min, t_closest) {
+                t_closest = rec.t;
+                hit_record = Some(rec);
+            }
+        }
+
+        hit_record
+    }
+}
