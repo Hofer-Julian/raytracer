@@ -12,19 +12,15 @@ impl Color {
     pub fn new(r: f64, g: f64, b: f64) -> Color {
         Color { e: [r, g, b] }
     }
-
-    pub fn format_color(self) -> String {
-        let red = (256 as f64 * self[0]) as u64;
-        let green = (256 as f64 * self[1]) as u64;
-        let blue = (256 as f64 * self[2]) as u64;
-
-        format!("{red} {green} {blue}")
-    }
 }
 
 impl Display for Color {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(R{}, G{}, B{})", self[0], self[1], self[2])
+        let red = (256 as f64 * self[0]) as u64;
+        let green = (256 as f64 * self[1]) as u64;
+        let blue = (256 as f64 * self[2]) as u64;
+
+        write!(f, "{red} {green} {blue}")
     }
 }
 

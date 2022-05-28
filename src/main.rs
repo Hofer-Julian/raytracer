@@ -68,7 +68,7 @@ fn main() {
             );
             let pixel_color = ray_color(&r);
 
-            writeln!(file, "{}", pixel_color.format_color()).unwrap();
+            writeln!(file, "{pixel_color}").unwrap();
         }
     }
     println!();
