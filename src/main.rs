@@ -58,5 +58,6 @@ fn main() {
             writeln!(file, "{}", pixel_color.format_color()).unwrap();
         }
     }
-    println!("\nDone");
+    println!();
+    println!("Done");
 }
