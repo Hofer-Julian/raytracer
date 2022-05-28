@@ -9,8 +9,8 @@ pub struct Color {
 }
 
 impl Color {
-    pub fn new(e0: f64, e1: f64, e2: f64) -> Color {
-        Color { e: [e0, e1, e2] }
+    pub fn new(r: f64, g: f64, b: f64) -> Color {
+        Color { e: [r, g, b] }
     }
 
     pub fn format_color(self) -> String {
