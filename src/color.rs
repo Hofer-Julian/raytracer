@@ -1,7 +1,4 @@
-use std::{
-    fmt::{self, Display},
-    ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign},
-};
+use std::ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign};
 
 #[derive(Clone, Copy)]
 pub struct Color {
@@ -12,15 +9,13 @@ impl Color {
     pub fn new(r: f64, g: f64, b: f64) -> Color {
         Color { e: [r, g, b] }
     }
-}
 
-impl Display for Color {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let red = (256 as f64 * self[0]) as u64;
-        let green = (256 as f64 * self[1]) as u64;
-        let blue = (256 as f64 * self[2]) as u64;
+    pub fn format_color(self, samples_per_pixel: u64) -> String {
+        let ir = (256.0 * (self[0] / (samples_per_pixel as f64)).clamp(0.0, 0.999)) as u64;
+        let ig = (256.0 * (self[1] / (samples_per_pixel as f64)).clamp(0.0, 0.999)) as u64;
+        let ib = (256.0 * (self[2] / (samples_per_pixel as f64)).clamp(0.0, 0.999)) as u64;
 
-        write!(f, "{red} {green} {blue}")
+        format!("{} {} {}", ir, ig, ib)
     }
 }
 
