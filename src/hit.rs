@@ -1,3 +1,6 @@
+use std::sync::Arc;
+
+use crate::material::Scatter;
 use crate::point3::Point3;
 use crate::ray::Ray;
 use crate::vec3::Vec3;
@@ -5,15 +8,23 @@ use crate::vec3::Vec3;
 pub struct HitRecord {
     pub point: Point3,
     pub normal: Vec3,
+    pub material: Arc<dyn Scatter>,
     pub t: f64,
     pub front_face: bool,
 }
 
 impl HitRecord {
-    pub fn new(point: Point3, t: f64, ray: &Ray, outward_normal: Vec3) -> HitRecord {
+    pub fn new(
+        point: Point3,
+        material: Arc<dyn Scatter>,
+        t: f64,
+        ray: &Ray,
+        outward_normal: Vec3,
+    ) -> HitRecord {
         let (front_face, normal) = Self::determine_face_normal(ray, outward_normal);
         HitRecord {
             point,
+            material,
             normal,
             t,
             front_face,

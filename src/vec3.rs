@@ -80,6 +80,10 @@ impl Vec3 {
             (-1.0) * in_unit_sphere
         }
     }
+    pub fn near_zero(self) -> bool {
+        const EPS: f64 = 1.0e-8;
+        self.length() < EPS
+    }
 }
 
 impl Display for Vec3 {

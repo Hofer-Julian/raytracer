@@ -1,15 +1,23 @@
+use std::sync::Arc;
+
 use crate::hit::{Hit, HitRecord};
+use crate::material::Scatter;
 use crate::point3::Point3;
 use crate::ray::Ray;
 
 pub struct Sphere {
     center: Point3,
     radius: f64,
+    material: Arc<dyn Scatter>,
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f64) -> Sphere {
-        Sphere { center, radius }
+    pub fn new(center: Point3, radius: f64, material: Arc<dyn Scatter>) -> Sphere {
+        Sphere {
+            center,
+            radius,
+            material,
+        }
     }
 }
 
@@ -37,7 +45,13 @@ impl Hit for Sphere {
 
         let point_hit = ray.at(t_hit);
         let outward_normal = (point_hit - self.center) / self.radius;
-        let rec = HitRecord::new(point_hit, t_hit, &ray, outward_normal);
+        let rec = HitRecord::new(
+            point_hit,
+            self.material.clone(),
+            t_hit,
+            &ray,
+            outward_normal,
+        );
 
         Some(rec)
     }

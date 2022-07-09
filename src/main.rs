@@ -2,11 +2,13 @@ use rayon::iter::ParallelIterator;
 use std::{
     fs::File,
     io::{stdout, Write},
+    sync::Arc,
 };
 
 mod camera;
 mod color;
 mod hit;
+mod material;
 mod point3;
 mod ray;
 mod sphere;
@@ -22,6 +24,8 @@ use rayon::iter::IntoParallelIterator;
 use sphere::Sphere;
 use vec3::Vec3;
 
+use crate::material::Lambertian;
+
 fn ray_color(r: &Ray, world: &World, depth: u64) -> Color {
     if depth <= 0 {
         // If we've exceeded the ray bounce limit, no more light is gathered
@@ -29,8 +33,7 @@ fn ray_color(r: &Ray, world: &World, depth: u64) -> Color {
     }
 
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
-        //let target = rec.point + rec.normal + Vec3::random_in_unit_sphere().normalized();
-        let target = rec.point + Vec3::random_in_hemisphere(rec.normal);
+        let target = rec.point + rec.normal + Vec3::random_in_unit_sphere().normalized();
         let r = Ray::new(rec.point, target - rec.point);
         0.5 * ray_color(&r, world, depth - 1)
     } else {
@@ -50,8 +53,17 @@ fn main() {
 
     // World
     let mut world = World::new();
-    world.push(Box::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
-    world.push(Box::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
+    let lambertian = Arc::new(Lambertian::new(Color::new(0.8, 0.3, 0.3)));
+    world.push(Box::new(Sphere::new(
+        Point3::new(0.0, 0.0, -1.0),
+        0.5,
+        lambertian.clone(),
+    )));
+    world.push(Box::new(Sphere::new(
+        Point3::new(0.0, -100.5, -1.0),
+        100.0,
+        lambertian.clone(),
+    )));
 
     // Camera
     let camera = Camera::new();
