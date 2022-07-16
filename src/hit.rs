@@ -6,10 +6,15 @@ use crate::ray::Ray;
 use crate::vec3::Vec3;
 
 pub struct HitRecord {
+    /// The point of intersection
     pub point: Point3,
+    /// The normal of the surface at the point of intersection
     pub normal: Vec3,
+    /// The material of the object that was hit
     pub material: Arc<dyn Scatter>,
+    /// The distance from the ray's origin to the hit point
     pub t: f64,
+    /// Whether or not the ray was inside the object
     pub front_face: bool,
 }
 

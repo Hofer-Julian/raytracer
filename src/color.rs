@@ -87,3 +87,13 @@ impl Mul<Color> for f64 {
         }
     }
 }
+
+impl Mul<Color> for Color {
+    type Output = Color;
+
+    fn mul(self, other: Color) -> Color {
+        Color {
+            e: [self[0] * other[0], self[1] * other[1], self[2] * other[2]],
+        }
+    }
+}

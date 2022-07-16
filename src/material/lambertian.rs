@@ -1,8 +1,6 @@
 use crate::{color::Color, hit::HitRecord, ray::Ray, vec3::Vec3};
 
-pub trait Scatter: Send + Sync {
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Color, Ray)>;
-}
+use super::Scatter;
 
 pub struct Lambertian {
     albedo: Color,

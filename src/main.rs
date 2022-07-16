@@ -14,6 +14,7 @@ mod ray;
 mod sphere;
 mod vec3;
 
+use crate::material::{Lambertian, Metal};
 use camera::Camera;
 use color::Color;
 use hit::{Hit, World};
@@ -22,22 +23,21 @@ use rand::Rng;
 use ray::Ray;
 use rayon::iter::IntoParallelIterator;
 use sphere::Sphere;
-use vec3::Vec3;
 
-use crate::material::Lambertian;
-
-fn ray_color(r: &Ray, world: &World, depth: u64) -> Color {
+fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
     if depth <= 0 {
         // If we've exceeded the ray bounce limit, no more light is gathered
         return Color::new(0.0, 0.0, 0.0);
     }
 
-    if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
-        let target = rec.point + rec.normal + Vec3::random_in_unit_sphere().normalized();
-        let r = Ray::new(rec.point, target - rec.point);
-        0.5 * ray_color(&r, world, depth - 1)
+    if let Some(record) = world.hit(ray, 0.001, f64::INFINITY) {
+        if let Some((attenuation, scattered)) = record.material.scatter(ray, &record) {
+            attenuation * ray_color(&scattered, world, depth - 1)
+        } else {
+            Color::new(0.0, 0.0, 0.0)
+        }
     } else {
-        let unit_direction = r.direction().normalized();
+        let unit_direction = ray.direction().normalized();
         let t = 0.5 * (unit_direction.y() + 1.0);
         (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
     }
@@ -53,17 +53,20 @@ fn main() {
 
     // World
     let mut world = World::new();
-    let lambertian = Arc::new(Lambertian::new(Color::new(0.8, 0.3, 0.3)));
-    world.push(Box::new(Sphere::new(
-        Point3::new(0.0, 0.0, -1.0),
-        0.5,
-        lambertian.clone(),
-    )));
-    world.push(Box::new(Sphere::new(
-        Point3::new(0.0, -100.5, -1.0),
-        100.0,
-        lambertian.clone(),
-    )));
+    let material_ground = Arc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
+    let material_center = Arc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
+    let material_left = Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
+    let material_right = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2)));
+
+    let sphere_ground = Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0, material_ground);
+    let sphere_center = Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5, material_center);
+    let sphere_left = Sphere::new(Point3::new(-1.0, 0.0, -1.0), 0.5, material_left);
+    let sphere_right = Sphere::new(Point3::new(1.0, 0.0, -1.0), 0.5, material_right);
+
+    world.push(Box::new(sphere_ground));
+    world.push(Box::new(sphere_center));
+    world.push(Box::new(sphere_left));
+    world.push(Box::new(sphere_right));
 
     // Camera
     let camera = Camera::new();

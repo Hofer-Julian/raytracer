@@ -80,9 +80,14 @@ impl Vec3 {
             (-1.0) * in_unit_sphere
         }
     }
+
     pub fn near_zero(self) -> bool {
         const EPS: f64 = 1.0e-8;
         self.length() < EPS
+    }
+
+    pub fn reflect(self, n: Vec3) -> Vec3 {
+        self - 2.0 * self.dot(n) * n
     }
 }
 
