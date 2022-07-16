@@ -13,13 +13,14 @@ impl Lambertian {
 }
 
 impl Scatter for Lambertian {
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Color, Ray)> {
+    fn scatter(&self, _r_in: &Ray, rec: &HitRecord) -> Option<(Color, Ray)> {
         let mut scatter_direction = rec.normal + Vec3::random_in_unit_sphere().normalized();
-        let scattered = Ray::new(rec.point, scatter_direction);
         if scatter_direction.near_zero() {
             // Catch degenerate scatter direction
             scatter_direction = rec.normal;
         }
+
+        let scattered = Ray::new(rec.point, scatter_direction);
 
         Some((self.albedo, scattered))
     }
