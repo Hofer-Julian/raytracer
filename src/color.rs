@@ -1,4 +1,6 @@
-use std::ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign};
+use std::ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Range};
+
+use rand::Rng;
 
 #[derive(Clone, Copy)]
 pub struct Color {
@@ -25,6 +27,18 @@ impl Color {
                 .clamp(0.0, 0.999)) as u64;
 
         format!("{} {} {}", ir, ig, ib)
+    }
+
+    pub fn random(r: Range<f64>) -> Self {
+        let mut rng = rand::thread_rng();
+
+        Self {
+            e: [
+                rng.gen_range(r.clone()),
+                rng.gen_range(r.clone()),
+                rng.gen_range(r.clone()),
+            ],
+        }
     }
 }
 
